@@ -1,34 +1,59 @@
 package com.erick.expensetracker.expensetracker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.time.LocalDate;
 
-
 @RestController
 @RequestMapping("/expenses")
 public class ExpenseController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExpenseController.class);
+
     @Autowired
     private ExpenseService expenseService;
 
+    @Autowired
+    private ExpenseMapper expenseMapper;
+
     @PostMapping
-    public ExpenseEntity createExpense(@Valid @RequestBody ExpenseEntity expense){
-        
-        return expenseService.createExpense(expense);
+    public ResponseEntity<ExpenseResponseDto> createExpense(@Valid @RequestBody ExpenseRequestDto requestDto){
+
+        ExpenseEntity entity = expenseMapper.toEntity(requestDto);
+        ExpenseEntity savedEntity = expenseService.createExpense(entity);
+
+        ExpenseResponseDto responseDto = expenseMapper.toResponseDto(savedEntity);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+
     }
     
+    
     @GetMapping
-    public List<ExpenseEntity> getAllExpenses(){
-        return expenseService.getAllExpenses();
+    public ResponseEntity<List<ExpenseResponseDto>> getAllExpenses(){
+        // Step 1: Get entities from service (database format)
+        List<ExpenseEntity> entities = expenseService.getAllExpenses();
+        
+        // Step 2: Convert to DTOs (client format) - MapStruct magic!
+        List<ExpenseResponseDto> responseDtos = expenseMapper.toResponseDtoList(entities);
+        
+        // Step 3: Return professional response
+        return ResponseEntity.ok(responseDtos);
     }
 
+
     @GetMapping("/{id}")
-    public ExpenseEntity getExpenseById(@PathVariable Long id){
-        return expenseService.getExpenseById(id);
+    public ResponseEntity<ExpenseResponseDto> getExpenseById(@PathVariable Long id){
+        ExpenseEntity entity = expenseService.getExpenseById(id);
+        ExpenseResponseDto responseDto = expenseMapper.toResponseDto(entity);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/category/{category}")
