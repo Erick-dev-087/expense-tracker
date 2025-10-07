@@ -2,8 +2,11 @@ package com.erick.expensetracker.expensetracker;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "expenses")
@@ -28,6 +31,19 @@ public class ExpenseEntity {
     private String category;
 
     private String description;
+
+    // Server-managed timestamp fields
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Status field for soft deletes and state management
+    @Column(name = "status")
+    private String status = "ACTIVE";
 
     public ExpenseEntity() {}
 
@@ -63,6 +79,19 @@ public class ExpenseEntity {
     public String getDescription() { return description; }
 
     public void setDescription(String description) { this.description = description; }
+
+    // Getters and setters for timestamp fields
+    public LocalDateTime getCreatedAt() { return createdAt; }
+
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
 
     }
 
