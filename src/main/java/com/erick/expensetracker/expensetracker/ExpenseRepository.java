@@ -19,6 +19,8 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long>{
     List<ExpenseEntity> findByDateAfter(LocalDate date);
     List<ExpenseEntity> findByDateBefore(LocalDate date);
 
+    List<ExpenseEntity> findByCategoryAndDateBetween(String category, LocalDate startDate, LocalDate endDate);
+
     // Find expenses greater than a certain amount
     List<ExpenseEntity> findByAmountGreaterThanEqual(BigDecimal amount);
     List<ExpenseEntity> findByAmountLessThan(BigDecimal amount);

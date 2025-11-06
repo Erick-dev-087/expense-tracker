@@ -1,5 +1,6 @@
 package com.erick.expensetracker.expensetracker;
 
+import com.erick.expensetracker.common.exception.ExpenseNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -26,13 +27,14 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ExpenseEntity getExpenseById(Long id) {
         return expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
+                .orElseThrow(() -> new ExpenseNotFoundException("Expense not found with id: " + id));
     }
+               
     
     @Override
     public ExpenseEntity updateExpense(Long id, ExpenseEntity expense) {
         if (!expenseRepository.existsById(id)) {
-            throw new RuntimeException("Expense not found with id: " + id);
+            throw new ExpenseNotFoundException("Expense not found with id: " + id);
         }
         expense.setId(id);
         return expenseRepository.save(expense);
@@ -41,7 +43,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public void deleteExpense(Long id) {
         if (!expenseRepository.existsById(id)) {
-            throw new RuntimeException("Expense not found with id: " + id);
+            throw new ExpenseNotFoundException("Expense not found with id: " + id);
         }
         expenseRepository.deleteById(id);
     }

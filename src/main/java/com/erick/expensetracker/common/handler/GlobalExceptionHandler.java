@@ -1,5 +1,7 @@
-package com.erick.expensetracker.expensetracker;
+package com.erick.expensetracker.common.handler;
 
+import com.erick.expensetracker.common.DTO.ErrorResponse;
+import com.erick.expensetracker.common.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -52,6 +54,40 @@ public class GlobalExceptionHandler {
         
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    /**
+     * Handles BudgetNotFoundException- where the budget is not found
+     */
+    @ExceptionHandler(BudgetNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBudgetNotFound(BudgetNotFoundException e, WebRequest request) {
+        logger.warn("Budget not found: {}", e.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BUDGET_NOT_FOUND",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=",""),
+                HttpStatus.NOT_FOUND.value()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    /**
+     * Handles InvalidBudgetDataException - where the budget has  invalid data
+     */
+
+    @ExceptionHandler(InvalidBudgetDataException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidBudgetData(InvalidBudgetDataException e, WebRequest request) {
+        logger.warn("Invalid budget data: {}", e.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                "INVALID_BUDGET_DATA",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=",""),
+                HttpStatus.BAD_REQUEST.value()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
 
     /**
      * Handles all other unexpected exceptions
