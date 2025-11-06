@@ -1,4 +1,4 @@
-package com.erick.expensetracker.expensetracker;
+package com.erick.expensetracker.common.exception;
 
 /*
  * Thrown when an expense cannot be found in the database

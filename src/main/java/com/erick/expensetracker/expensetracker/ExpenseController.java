@@ -57,48 +57,67 @@ public class ExpenseController {
     }
 
     @GetMapping("/category/{category}")
-    public List<ExpenseEntity> getExpensesByCategory(@PathVariable String category){
-        return expenseService.getExpensesByCategory(category);
+    public ResponseEntity<List<ExpenseResponseDto>> getExpensesByCategory(@PathVariable String category){
+        List<ExpenseEntity> entities =  expenseService.getExpensesByCategory(category);
+        
+        List<ExpenseResponseDto> responseDtos = expenseMapper.toResponseDtoList(entities);
+
+        return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/date-range")
-    public List<ExpenseEntity> getExpensesByDateRange(
+    public ResponseEntity<List<ExpenseResponseDto>> getExpensesByDateRange(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate){
         
-        return expenseService.getExpensesByDateRange(startDate, endDate);
-    }
+        List<ExpenseEntity> entities = expenseService.getExpensesByDateRange(startDate, endDate);
+
+        List<ExpenseResponseDto> responseDtos = expenseMapper.toResponseDtoList(entities);
+
+        return ResponseEntity.ok(responseDtos);
+    }   
 
     @PutMapping("/{id}")
-    public ExpenseEntity updateExpense(@PathVariable Long id,@Valid @RequestBody ExpenseEntity expenseDetails){
+    public ResponseEntity<ExpenseResponseDto> updateExpense(@PathVariable Long id, @Valid @RequestBody ExpenseUpdateDto updateDto){
         
-        return expenseService.updateExpense(id, expenseDetails);
+        // Step 1: Convert DTO to Entity for service layer
+        ExpenseEntity entityToUpdate = expenseMapper.toEntity(updateDto);
+        
+        // Step 2: Service handles business logic and persistence
+        ExpenseEntity updatedEntity = expenseService.updateExpense(id, entityToUpdate);
 
+        // Step 3: Convert back to ResponseDto for client
+        ExpenseResponseDto responseDto = expenseMapper.toResponseDto(updatedEntity);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteExpense(@PathVariable Long id){
+    public ResponseEntity <Void>  deleteExpense(@PathVariable Long id){
         expenseService.deleteExpense(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/count/")
-    public Long getTotalExpenseCount(){
-        return expenseService.getTotalExpenseCount();
+    public ResponseEntity<Long> getTotalExpenseCount(){
+        Long expensesCount = expenseService.getTotalExpenseCount();
+        return ResponseEntity.ok(expensesCount);
     }
 
     @GetMapping("/count/category/{category}")
-    public Long getExpenseCountByCategory(@PathVariable String category){
-        return expenseService.getExpenseCountByCategory(category);
-
+    public ResponseEntity<Long> getExpenseCountByCategory(@PathVariable String category){
+        Long categoryCount = expenseService.getExpenseCountByCategory(category);
+        return ResponseEntity.ok(categoryCount);
     }
 
     @GetMapping("/count/date-range")
-    public long getExpenseCountByDateRange(
+    public ResponseEntity<Long> getExpenseCountByDateRange(
         @RequestParam LocalDate startDate,
         @RequestParam LocalDate endDate
     ){
-
-    return expenseService.getExpenseCountByDateRange(startDate, endDate);
+        Long dateRangeCount = expenseService.getExpenseCountByDateRange(startDate, endDate);
+        return ResponseEntity.ok(dateRangeCount);
     }
 }
 

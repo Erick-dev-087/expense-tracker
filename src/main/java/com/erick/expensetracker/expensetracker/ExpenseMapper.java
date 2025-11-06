@@ -19,7 +19,7 @@ public interface ExpenseMapper {
     @Mapping(target = "status", ignore = true)
     ExpenseEntity toEntity(ExpenseRequestDto dto);
 
-   
+    //Method 2: READ - Entity to ResponseDTO
     ExpenseResponseDto toResponseDto(ExpenseEntity entity);
 
     // Method 3: UPDATE - UpdateDto to Entity (ignore server-managed fields)

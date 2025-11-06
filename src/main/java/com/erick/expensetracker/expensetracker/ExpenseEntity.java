@@ -25,7 +25,6 @@ public class ExpenseEntity {
 
     @NotNull(message = "Date is required")
     @PastOrPresent(message = "Date cannot be in the future")
-    
     private LocalDate date;
 
     private String category;

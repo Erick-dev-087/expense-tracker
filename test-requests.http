@@ -1,15 +1,16 @@
-### Expense Tracker API Testing
+### Professional Expense Tracker API Testing
 ### Make sure your Spring Boot app is running on localhost:8080
 
-### 1. CREATE a new expense
+### 1. CREATE a new expense - Test DTO Transformation & 201 Status
 POST http://localhost:8080/expenses
 Content-Type: application/json
 
 {
-  "title": "Grocery Shopping",
-  "amount": 85.50,
-  "category": "FOOD",
-  "date": "2023-09-21"
+  "title": "Professional API Test",
+  "amount": 25.99,
+  "category": "Food",
+  "date": "2024-10-14",
+  "description": "Testing RequestDto → Entity → ResponseDto"
 }
 
 ### 2. GET all expenses

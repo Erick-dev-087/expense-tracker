@@ -1,4 +1,4 @@
-package com.erick.expensetracker.expensetracker;
+package com.erick.expensetracker.common.DTO;
 
 import java.time.LocalDateTime;
 
