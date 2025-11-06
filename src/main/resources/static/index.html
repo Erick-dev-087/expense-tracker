@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .endpoint-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .endpoint-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .method {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            color: white;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .get { background-color: #28a745; }
+        .post { background-color: #007bff; }
+        .put { background-color: #ffc107; color: black; }
+        .delete { background-color: #dc3545; }
+        .url {
+            font-family: monospace;
+            background-color: #e9ecef;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .description {
+            margin-top: 8px;
+            color: #666;
+            font-style: italic;
+        }
+        .test-button {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .test-button:hover {
+            background-color: #138496;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 Expense Tracker API</h1>
+        <p style="text-align: center; color: #666;">Welcome to your Spring Boot Expense Tracker API! Test all endpoints below.</p>
+
+        <!-- Get All Expenses -->
+        <div class="endpoint-section">
+            <div class="endpoint-title">
+                <span class="method get">GET</span>
+                <span class="url">/expenses</span>
+            </div>
+            <div class="description">Get all expenses</div>
+            <button class="test-button" onclick="testEndpoint('GET', '/expenses')">Test</button>
+            <div id="result-get-all" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Create Expense -->
+        <div class="endpoint-section">
+            <div class="endpoint-title">
+                <span class="method post">POST</span>
+                <span class="url">/expenses</span>
+            </div>
+            <div class="description">Create a new expense</div>
+            <button class="test-button" onclick="createSampleExpense()">Create Sample Expense</button>
+            <div id="result-create" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Get Expense by ID -->
+        <div class="endpoint-section">
+            <div class="endpoint-title">
+                <span class="method get">GET</span>
+                <span class="url">/expenses/{id}</span>
+            </div>
+            <div class="description">Get expense by ID</div>
+            <input type="number" id="expense-id" placeholder="Enter expense ID" style="margin-right: 10px;">
+            <button class="test-button" onclick="getExpenseById()">Test</button>
+            <div id="result-get-by-id" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Get by Category -->
+        <div class="endpoint-section">
+            <div class="endpoint-title">
+                <span class="method get">GET</span>
+                <span class="url">/expenses/category/{category}</span>
+            </div>
+            <div class="description">Get expenses by category</div>
+            <select id="category-select" style="margin-right: 10px;">
+                <option value="FOOD">FOOD</option>
+                <option value="TRANSPORT">TRANSPORT</option>
+                <option value="ENTERTAINMENT">ENTERTAINMENT</option>
+                <option value="UTILITIES">UTILITIES</option>
+                <option value="OTHER">OTHER</option>
+            </select>
+            <button class="test-button" onclick="getExpensesByCategory()">Test</button>
+            <div id="result-get-by-category" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Get Total Count -->
+        <div class="endpoint-section">
+            <div class="endpoint-title">
+                <span class="method get">GET</span>
+                <span class="url">/expenses/count</span>
+            </div>
+            <div class="description">Get total expense count</div>
+            <button class="test-button" onclick="testEndpoint('GET', '/expenses/count', 'result-count')">Test</button>
+            <div id="result-count" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Update Expense -->
+        <div class="endpoint-section">
+            <div class="endpoint-title">
+                <span class="method put">PUT</span>
+                <span class="url">/expenses/{id}</span>
+            </div>
+            <div class="description">Update an expense</div>
+            <input type="number" id="update-id" placeholder="Enter expense ID" style="margin-right: 10px;">
+            <button class="test-button" onclick="updateExpense()">Update Sample Expense</button>
+            <div id="result-update" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Delete Expense -->
+        <div class="endpoint-section">
+            <div class="endpoint-title">
+                <span class="method delete">DELETE</span>
+                <span class="url">/expenses/{id}</span>
+            </div>
+            <div class="description">Delete an expense</div>
+            <input type="number" id="delete-id" placeholder="Enter expense ID" style="margin-right: 10px;">
+            <button class="test-button" onclick="deleteExpense()">Delete</button>
+            <div id="result-delete" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8080';
+
+        async function testEndpoint(method, endpoint, resultId = null) {
+            const resultElement = document.getElementById(resultId || `result-${method.toLowerCase()}-${endpoint.replace(/[^a-z]/gi, '')}`);
+            
+            try {
+                const response = await fetch(BASE_URL + endpoint, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.text();
+                resultElement.style.display = 'block';
+                resultElement.className = 'result';
+                resultElement.textContent = `Status: ${response.status}\n\n${data}`;
+            } catch (error) {
+                resultElement.style.display = 'block';
+                resultElement.className = 'result error';
+                resultElement.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function createSampleExpense() {
+            const resultElement = document.getElementById('result-create');
+            
+            const expense = {
+                title: "Sample Grocery Shopping",
+                amount: 75.50,
+                category: "FOOD",
+                date: "2023-09-21"
+            };
+
+            try {
+                const response = await fetch(BASE_URL + '/expenses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(expense)
+                });
+
+                const data = await response.text();
+                resultElement.style.display = 'block';
+                resultElement.className = 'result';
+                resultElement.textContent = `Status: ${response.status}\n\n${data}`;
+            } catch (error) {
+                resultElement.style.display = 'block';
+                resultElement.className = 'result error';
+                resultElement.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function getExpenseById() {
+            const id = document.getElementById('expense-id').value;
+            if (!id) {
+                alert('Please enter an expense ID');
+                return;
+            }
+            await testEndpoint('GET', `/expenses/${id}`, 'result-get-by-id');
+        }
+
+        async function getExpensesByCategory() {
+            const category = document.getElementById('category-select').value;
+            await testEndpoint('GET', `/expenses/category/${category}`, 'result-get-by-category');
+        }
+
+        async function updateExpense() {
+            const id = document.getElementById('update-id').value;
+            if (!id) {
+                alert('Please enter an expense ID to update');
+                return;
+            }
+
+            const resultElement = document.getElementById('result-update');
+            
+            const expense = {
+                title: "Updated Expense",
+                amount: 99.99,
+                category: "FOOD",
+                date: "2023-09-21"
+            };
+
+            try {
+                const response = await fetch(BASE_URL + `/expenses/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(expense)
+                });
+
+                const data = await response.text();
+                resultElement.style.display = 'block';
+                resultElement.className = 'result';
+                resultElement.textContent = `Status: ${response.status}\n\n${data}`;
+            } catch (error) {
+                resultElement.style.display = 'block';
+                resultElement.className = 'result error';
+                resultElement.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function deleteExpense() {
+            const id = document.getElementById('delete-id').value;
+            if (!id) {
+                alert('Please enter an expense ID to delete');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete expense ${id}?`)) {
+                return;
+            }
+
+            await testEndpoint('DELETE', `/expenses/${id}`, 'result-delete');
+        }
+    </script>
+</body>
+</html>

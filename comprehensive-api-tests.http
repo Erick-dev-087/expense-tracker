@@ -1,0 +1,242 @@
+### 🎯 PROFESSIONAL API TESTING SUITE
+### Comprehensive test cases for your DTO-transformed Expense Tracker API
+
+################################################################################
+### 📊 SUCCESS SCENARIOS - Testing Happy Path
+################################################################################
+
+### ✅ Test 1: CREATE Expense - RequestDto → ResponseDto (Expect 201)
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Morning Coffee",
+  "amount": 4.50,
+  "category": "Food",
+  "date": "2024-10-14",
+  "description": "Daily coffee expense"
+}
+
+### ✅ Test 2: GET All Expenses - List<ResponseDto> (Expect 200)
+GET http://localhost:8080/expenses
+
+### ✅ Test 3: GET Expense by ID - ResponseDto (Expect 200)
+# Note: Replace '1' with actual ID from CREATE response
+GET http://localhost:8080/expenses/1
+
+### ✅ Test 4: UPDATE Expense - UpdateDto → ResponseDto (Expect 200)  
+# Note: Replace '1' with actual ID from CREATE response
+PUT http://localhost:8080/expenses/1
+Content-Type: application/json
+
+{
+  "title": "Updated Coffee",
+  "amount": 5.50,
+  "category": "Food", 
+  "date": "2024-10-14",
+  "description": "Updated expense description"
+}
+
+### ✅ Test 5: GET by Category - List<ResponseDto> (Expect 200)
+GET http://localhost:8080/expenses/category/Food
+
+### ✅ Test 6: GET by Date Range - List<ResponseDto> (Expect 200)
+GET http://localhost:8080/expenses/date-range?startDate=2024-01-01&endDate=2024-12-31
+
+### ✅ Test 7: GET Total Count - ResponseEntity<Long> (Expect 200)
+GET http://localhost:8080/expenses/count/
+
+### ✅ Test 8: GET Category Count - ResponseEntity<Long> (Expect 200)
+GET http://localhost:8080/expenses/count/category/Food
+
+### ✅ Test 9: GET Date Range Count - ResponseEntity<Long> (Expect 200)
+GET http://localhost:8080/expenses/count/date-range?startDate=2024-01-01&endDate=2024-12-31
+
+### ✅ Test 10: DELETE Expense - HTTP 204 No Content
+# Note: Replace '1' with actual ID - This will delete the expense!
+DELETE http://localhost:8080/expenses/1
+
+################################################################################
+### ❌ ERROR SCENARIOS - Testing Exception Handling
+################################################################################
+
+### ❌ Test 11: GET Non-existent Expense - Custom 404 Error
+GET http://localhost:8080/expenses/99999
+
+### ❌ Test 12: UPDATE Non-existent Expense - Custom 404 Error
+PUT http://localhost:8080/expenses/99999
+Content-Type: application/json
+
+{
+  "title": "Should fail",
+  "amount": 10.00,
+  "category": "Test",
+  "date": "2024-10-14",
+  "description": "This should return 404"
+}
+
+### ❌ Test 13: DELETE Non-existent Expense - Custom 404 Error
+DELETE http://localhost:8080/expenses/99999
+
+### ❌ Test 14: CREATE Invalid Data - Validation Errors (Expect 400)
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "",
+  "amount": -5.50,
+  "category": "",
+  "date": "2030-01-01",
+  "description": "Should fail validation"
+}
+
+### ❌ Test 15: CREATE Missing Required Fields - Validation Errors (Expect 400)
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Missing Amount"
+}
+
+################################################################################
+### 🔍 BOUNDARY TESTING - Edge Cases
+################################################################################
+
+### 🔍 Test 16: CREATE Minimum Valid Data
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "A",
+  "amount": 0.01,
+  "category": "Test",
+  "date": "2024-10-14"
+}
+
+### 🔍 Test 17: GET Empty Category
+GET http://localhost:8080/expenses/category/NonExistentCategory
+
+### 🔍 Test 18: GET Future Date Range (Should be empty)
+GET http://localhost:8080/expenses/date-range?startDate=2030-01-01&endDate=2030-12-31
+
+################################################################################
+### 📊 BUDGET API TESTS
+################################################################################
+
+### ✅ Create Budget
+POST http://localhost:8080/budgets
+Content-Type: application/json
+
+{
+  "category": "Food",
+  "amount": 500.00,
+  "startDate": "2025-10-01",
+  "endDate": "2025-10-31",
+  "periodType": "MONTHLY"
+}
+
+### ✅ Create second Budget (Transport)
+POST http://localhost:8080/budgets
+Content-Type: application/json
+
+{
+  "category": "Transport",
+  "amount": 200.00,
+  "startDate": "2025-10-01",
+  "endDate": "2025-10-31",
+  "periodType": "MONTHLY"
+}
+
+### ✅ Create third Budget (Entertainment)
+POST http://localhost:8080/budgets
+Content-Type: application/json
+
+{
+  "category": "Entertainment",
+  "amount": 150.00,
+  "startDate": "2025-10-01",
+  "endDate": "2025-10-31",
+  "periodType": "MONTHLY"
+}
+
+### ✅ Create expenses to exercise budget health
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Grocery shopping",
+  "amount": 300.00,
+  "date": "2025-10-05",
+  "category": "Food",
+  "description": "Bulk groceries"
+}
+
+
+
+### Create expense 2 for food
+
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Dinner out",
+  "amount": 250.00,
+  "date": "2025-10-20",
+  "category": "Food",
+  "description": "Restaurant bill"
+}
+
+### Create expense 1 for entertainment
+
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Movie night",
+  "amount": 80.00,
+  "date": "2025-10-10",
+  "category": "Entertainment",
+  "description": "Tickets and snacks"
+}
+
+### ✅ Re-run get budgets by status to see ACTIVE budgets
+GET http://localhost:8080/budgets/status/ACTIVE
+
+### ✅ Check budget status for Food (should reflect spent > 500 => OVER_BUDGET if total > amount)
+GET http://localhost:8080/budgets/3/budget-status
+
+### ✅ Get All Budgets
+GET http://localhost:8080/budgets
+
+### ✅ Get Budget by ID
+GET http://localhost:8080/budgets/2
+
+### ✅ Update Budget
+PUT http://localhost:8080/budgets/1
+Content-Type: application/json
+
+{
+  "category": "Food",
+  "amount": 600.00,
+  "startDate": "2025-10-01",
+  "endDate": "2025-10-31",
+  "period": "MONTHLY"
+}
+
+### ✅ Delete Budget
+DELETE http://localhost:8080/budgets/1
+
+### ✅ Get Budgets by Category
+GET http://localhost:8080/budgets/category/Food
+
+### ✅ Get Budgets by Status
+GET http://localhost:8080/budgets/status/ACTIVE
+
+### ✅ Get Budgets by Date Range
+GET http://localhost:8080/budgets/date-range?startDate=2025-10-01&endDate=2025-10-31
+
+### ✅ Get Active Budgets by Category
+GET http://localhost:8080/budgets/active/Food
+
+### ✅ Get Budget Status by ID
+GET http://localhost:8080/budgets/2/budget-status

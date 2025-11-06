@@ -1,0 +1,82 @@
+### Professional Expense Tracker API Testing
+### Make sure your Spring Boot app is running on localhost:8080
+
+### 1. CREATE a new expense - Test DTO Transformation & 201 Status
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Professional API Test",
+  "amount": 25.99,
+  "category": "Food",
+  "date": "2024-10-14",
+  "description": "Testing RequestDto → Entity → ResponseDto"
+}
+
+### 2. GET all expenses
+GET http://localhost:8080/expenses
+
+### 3. GET expense by ID (replace 1 with actual ID from database)
+GET http://localhost:8080/expenses/1
+
+### 4. GET expenses by category
+GET http://localhost:8080/expenses/category/FOOD
+
+### 5. GET expenses by date range
+GET http://localhost:8080/expenses/date-range?startDate=2023-01-01&endDate=2023-12-31
+
+### 6. UPDATE an expense (replace 1 with actual ID)
+PUT http://localhost:8080/expenses/1
+Content-Type: application/json
+
+{
+  "title": "Updated Grocery Shopping",
+  "amount": 95.75,
+  "category": "FOOD",
+  "date": "2023-09-21"
+}
+
+### 7. GET total expense count
+GET http://localhost:8080/expenses/count
+
+### 8. GET expense count by category
+GET http://localhost:8080/expenses/count/category/FOOD
+
+### 9. GET expense count by date range
+GET http://localhost:8080/expenses/count/date-range?startDate=2023-01-01&endDate=2023-12-31
+
+### 10. DELETE an expense (replace 1 with actual ID)
+DELETE http://localhost:8080/expenses/1
+
+### Test Data - Create multiple expenses for testing
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Coffee",
+  "amount": 4.50,
+  "category": "FOOD",
+  "date": "2023-09-20"
+}
+
+###
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Gas",
+  "amount": 45.00,
+  "category": "TRANSPORT",
+  "date": "2023-09-19"
+}
+
+###
+POST http://localhost:8080/expenses
+Content-Type: application/json
+
+{
+  "title": "Movie Ticket",
+  "amount": 12.00,
+  "category": "ENTERTAINMENT",
+  "date": "2023-09-18"
+}
